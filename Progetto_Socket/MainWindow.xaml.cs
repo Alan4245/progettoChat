@@ -42,14 +42,15 @@ namespace Progetto_Socket
                 socket.Bind(endpoint); //associo la socket ad un endpoint locale
 
 
-                dTimer = new DispatcherTimer();
+                dTimer = new DispatcherTimer(); //istanzio il dispatcher
 
-                dTimer.Tick += new EventHandler(aggiornamento_dTimer);
+                dTimer.Tick += new EventHandler(aggiornamento_dTimer); //setto i parametri del dispatcher
                 dTimer.Interval = new TimeSpan(0, 0, 0, 0, 250);
-                dTimer.Start();
-            }catch(Exception ex)
+                dTimer.Start(); //starto il dispatcher
+            }
+            catch(Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message); //catturo eventuali errori e li visualizzo
             }
         }
 
@@ -57,17 +58,17 @@ namespace Progetto_Socket
         {
             try
             {
-                IPAddress remote = IPAddress.Parse(txtIP.Text);
-                IPEndPoint rempote_endpoint = new IPEndPoint(remote, int.Parse(txtPorta.Text));
-                byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text);
-                socket.SendTo(mex, rempote_endpoint);
+                IPAddress remote = IPAddress.Parse(txtIP.Text); //ottengo l'ip remoto
+                IPEndPoint rempote_endpoint = new IPEndPoint(remote, int.Parse(txtPorta.Text)); //ottengo il remote endpoint
+                byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text); //codifico il messaggio
+                socket.SendTo(mex, rempote_endpoint); //inoltro il messaggio al remote endpoint
 
-                lstBox.Items.Add("TU" + ": " + txtMex.Text);
+                lstBox.Items.Add("TU" + ": " + txtMex.Text); //MIGLIORIA: mi trascrivo il messaggio inviato nella listbox
 
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message); //catturo eventuali errori e li visualizzo
             }
         }
 
@@ -76,7 +77,7 @@ namespace Progetto_Socket
 
             int nBytes = 0;
 
-            if((nBytes = socket.Available) > 0)
+            if((nBytes = socket.Available) > 0) //verifico che io abbia ricevuto dei messaggi
             {
                 //ricezione dei caratteri in attesa
                 byte[] buffer = new byte[nBytes];
