@@ -24,22 +24,22 @@ namespace Progetto_Socket
     public partial class MainWindow : Window
     {
 
-        Socket cipolla;
-        DispatcherTimer dTimer;
+        Socket socket; //creazione socket
+        DispatcherTimer dTimer; //creazione dispatcher
         public MainWindow()
         {
             try
             {
-                InitializeComponent();
+                InitializeComponent(); //inizializzazione componenti
 
-                cipolla = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp); //istanzio la socket
 
-                IPAddress local = IPAddress.Any;
-                IPEndPoint endpoint = new IPEndPoint(local.MapToIPv4(), 65000);
+                IPAddress local = IPAddress.Any; //istanzio l'indirizzo locale
+                IPEndPoint endpoint = new IPEndPoint(local.MapToIPv4(), 65000); //istanzio un endpoint locale con porta 65000
 
                 lblRx.Content = "Ricezione messaggi attiva";
 
-                cipolla.Bind(endpoint);
+                socket.Bind(endpoint); //associo la socket ad un endpoint locale
 
 
                 dTimer = new DispatcherTimer();
@@ -60,7 +60,7 @@ namespace Progetto_Socket
                 IPAddress remote = IPAddress.Parse(txtIP.Text);
                 IPEndPoint rempote_endpoint = new IPEndPoint(remote, int.Parse(txtPorta.Text));
                 byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text);
-                cipolla.SendTo(mex, rempote_endpoint);
+                socket.SendTo(mex, rempote_endpoint);
 
                 lstBox.Items.Add("TU" + ": " + txtMex.Text);
 
@@ -76,13 +76,13 @@ namespace Progetto_Socket
 
             int nBytes = 0;
 
-            if((nBytes = cipolla.Available) > 0)
+            if((nBytes = socket.Available) > 0)
             {
                 //ricezione dei caratteri in attesa
                 byte[] buffer = new byte[nBytes];
 
                 EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                nBytes = cipolla.ReceiveFrom(buffer, ref remoteEndPoint);
+                nBytes = socket.ReceiveFrom(buffer, ref remoteEndPoint);
                 string from = ((IPEndPoint)remoteEndPoint).Address.ToString();
                 string messaggio = Encoding.UTF8.GetString(buffer, 0, nBytes);
 
