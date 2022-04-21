@@ -104,7 +104,11 @@ namespace Progetto_Socket
                             lock (semaforo)
                             {
                                 c.AggiungiMessaggio(c.Nominativo + ": " + messaggio);
-                                AggiornaChat();
+                                this.Dispatcher.BeginInvoke(new Action(() =>
+                                {
+                                    AggiornaChat();
+                                }));
+                                
                             }
                         }
                     }
@@ -147,7 +151,14 @@ namespace Progetto_Socket
                 IPEndPoint rempote_endpoint = new IPEndPoint(remote, int.Parse(txtPorta.Text));
                 string nominativo = txtNominativo.Text;
                 Contatto nuovoContatto = new Contatto(rempote_endpoint, nominativo);
-                if (contatti.Contains(nuovoContatto))
+                bool presente = false;
+                foreach(Contatto c in contatti)
+                {
+                    if (c.Nominativo == nuovoContatto.Nominativo)
+                        presente = true;
+                }
+
+                if (presente)
                 {
                     throw new Exception("Contatto già presente!");
                 }
