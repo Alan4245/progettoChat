@@ -26,6 +26,8 @@ namespace Progetto_Socket
 
         Socket socket; //creazione socket
         DispatcherTimer dTimer; //creazione dispatcher
+        object semaforo;
+        List<Contatto> contatti;
         public MainWindow()
         {
             try
@@ -41,6 +43,8 @@ namespace Progetto_Socket
 
                 socket.Bind(endpoint); //associo la socket ad un endpoint locale
 
+                semaforo = new object();
+                contatti = new List<Contatto>();
 
                 dTimer = new DispatcherTimer(); //istanzio il dispatcher
 
@@ -95,6 +99,24 @@ namespace Progetto_Socket
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             lstBox.Items.Clear();
+        }
+
+        private void btnCreaContatto_Click(object sender, RoutedEventArgs e)
+        {
+
+            try
+            {
+                IPAddress remote = IPAddress.Parse(txtIP.Text);
+                IPEndPoint rempote_endpoint = new IPEndPoint(remote, int.Parse(txtPorta.Text));
+                string nominativo = txtNominativo.Text;
+                Contatto nuovoContatto = new Contatto(rempote_endpoint, nominativo);
+                lstContatti.Items.Add(nuovoContatto);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Si è verificato un errore: " + ex.Message);
+            }
+
         }
     }
 }
