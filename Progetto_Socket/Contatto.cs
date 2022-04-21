@@ -98,5 +98,10 @@ namespace Progetto_Socket
 
         }
 
+        public override string ToString()
+        {
+            return Nominativo;
+        }
+
     }
 }
