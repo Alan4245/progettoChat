@@ -69,8 +69,8 @@ namespace Progetto_Socket
                         lstBox.Items.Add("TU" + ": " + txtMex.Text); //MIGLIORIA: mi trascrivo il messaggio inviato nella listbox
                         contattoCorrente.AggiungiMessaggio("TU" + ": " + txtMex.Text);
 
-                        byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text); //codifico il messaggio
-                        socket.SendTo(mex, contattoCorrente.EndPoint); //inoltro il messaggio al remote endpoint
+                        //byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text); //codifico il messaggio
+                        //socket.SendTo(mex, contattoCorrente.EndPoint); //inoltro il messaggio al remote endpoint
                     }
                 }
 
@@ -170,6 +170,8 @@ namespace Progetto_Socket
                             }
                         }
 
+                        lstBox.Items.Clear();
+
                         if(contattoCorrente.Chat != null)
                         {
                             foreach (string messaggio in contattoCorrente.Chat)
@@ -185,6 +187,48 @@ namespace Progetto_Socket
                 }
             }
 
+        }
+
+        private void btnBroadcast_Click(object sender, RoutedEventArgs e)
+        {
+
+            try
+            {
+                if (lstContatti.SelectedIndex != -1)
+                {
+                    lock (semaforo)
+                    {
+                        //byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text); //codifico il messaggio
+                        foreach (Contatto c in contatti)
+                        {
+                            c.AggiungiMessaggio("TU" + ": " + txtMex.Text);
+                            
+                            //socket.SendTo(mex, c.EndPoint); //inoltro il messaggio al remote endpoint
+                        }
+
+                        AggiornaChat();
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message); //catturo eventuali errori e li visualizzo
+            }
+
+        }
+
+        public void AggiornaChat()
+        {
+            lstBox.Items.Clear();
+
+            if (contattoCorrente.Chat != null)
+            {
+                foreach (string messaggio in contattoCorrente.Chat)
+                {
+                    lstBox.Items.Add(messaggio);
+                }
+            }
         }
     }
 }
