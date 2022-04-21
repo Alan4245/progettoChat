@@ -96,7 +96,14 @@ namespace Progetto_Socket
                 string from = ((IPEndPoint)remoteEndPoint).Address.ToString();
                 string messaggio = Encoding.UTF8.GetString(buffer, 0, nBytes);
 
-                lstBox.Items.Add(from + ": " + messaggio);
+                foreach(Contatto c in contatti)
+                {
+                    if(c.EndPoint == remoteEndPoint)
+                    {
+                        c.AggiungiMessaggio(from + ": " + messaggio);
+                        AggiornaChat();
+                    }
+                }
             }
 
         }
