@@ -22,6 +22,7 @@ namespace Progetto_Socket
             {
                 EndPoint = endPoint;
                 Nominativo = nominativo;
+                _chat = new List<string>();
             }catch(Exception ex)
             {
                 throw new Exception("Impossibile creare il contatto: " + ex.Message);
