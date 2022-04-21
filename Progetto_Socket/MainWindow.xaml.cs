@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Threading;
 
 namespace Progetto_Socket
 {
@@ -29,6 +30,8 @@ namespace Progetto_Socket
         object semaforo;
         List<Contatto> contatti;
         Contatto contattoCorrente;
+        Thread ricezione;
+
         public MainWindow()
         {
             try
@@ -45,12 +48,8 @@ namespace Progetto_Socket
 
                 semaforo = new object();
                 contatti = new List<Contatto>();
-
-                dTimer = new DispatcherTimer(); //istanzio il dispatcher
-
-                dTimer.Tick += new EventHandler(aggiornamento_dTimer); //setto i parametri del dispatcher
-                dTimer.Interval = new TimeSpan(0, 0, 0, 0, 250);
-                dTimer.Start(); //starto il dispatcher
+                ricezione = new Thread(new ThreadStart(metodoRicezione));
+                ricezione.Start();
             }
             catch(Exception ex)
             {
@@ -81,27 +80,33 @@ namespace Progetto_Socket
             }
         }
 
-        private void aggiornamento_dTimer(object sender, EventArgs e)
+        private void metodoRicezione()
         {
 
-            int nBytes = 0;
-
-            if((nBytes = socket.Available) > 0) //verifico che io abbia ricevuto dei messaggi
+            while (true)
             {
-                //ricezione dei caratteri in attesa
-                byte[] buffer = new byte[nBytes];
+                int nBytes = 0;
 
-                EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                nBytes = socket.ReceiveFrom(buffer, ref remoteEndPoint);
-                string from = ((IPEndPoint)remoteEndPoint).Address.ToString();
-                string messaggio = Encoding.UTF8.GetString(buffer, 0, nBytes);
-
-                foreach(Contatto c in contatti)
+                if ((nBytes = socket.Available) > 0) //verifico che io abbia ricevuto dei messaggi
                 {
-                    if(c.EndPoint.ToString() == remoteEndPoint.ToString())
+                    //ricezione dei caratteri in attesa
+                    byte[] buffer = new byte[nBytes];
+
+                    EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                    nBytes = socket.ReceiveFrom(buffer, ref remoteEndPoint);
+                    string from = ((IPEndPoint)remoteEndPoint).Address.ToString();
+                    string messaggio = Encoding.UTF8.GetString(buffer, 0, nBytes);
+
+                    foreach (Contatto c in contatti)
                     {
-                        c.AggiungiMessaggio(c.Nominativo + ": " + messaggio);
-                        AggiornaChat();
+                        if (c.EndPoint.ToString() == remoteEndPoint.ToString())
+                        {
+                            lock (semaforo)
+                            {
+                                c.AggiungiMessaggio(c.Nominativo + ": " + messaggio);
+                                AggiornaChat();
+                            }
+                        }
                     }
                 }
             }
