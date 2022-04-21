@@ -24,7 +24,7 @@
         <Label Content="       INVIA UN MESSAGGIO" HorizontalAlignment="Left" Margin="350,70,0,0" VerticalAlignment="Top" Width="185"/>
         <Button x:Name="btnCreaContatto" Content="CREA CONTATTO" HorizontalAlignment="Left" Margin="895,245,0,0" VerticalAlignment="Top" Width="185" Click="btnCreaContatto_Click"/>
         <Label Content="      SELEZIONA IL CONTATTO" HorizontalAlignment="Left" Margin="640,17,0,0" VerticalAlignment="Top" Width="185"/>
-        <ListBox x:Name="lstContatti" HorizontalAlignment="Left" Height="210" Margin="640,70,0,0" VerticalAlignment="Top" Width="185"/>
+        <ListBox x:Name="lstContatti" HorizontalAlignment="Left" Height="210" Margin="640,70,0,0" VerticalAlignment="Top" Width="185" SelectionChanged="lstContatti_SelectionChanged"/>
 
     </Grid>
 </Window>

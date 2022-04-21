@@ -136,6 +136,7 @@ namespace Progetto_Socket
                 }
                 else
                 {
+                    contatti.Add(nuovoContatto);
                     lstContatti.Items.Add(nuovoContatto);
                 }
             }
@@ -164,9 +165,12 @@ namespace Progetto_Socket
                             }
                         }
 
-                        foreach(string messaggio in contattoCorrente.Chat)
+                        if(contattoCorrente.Chat != null)
                         {
-                            lstBox.Items.Add(messaggio);
+                            foreach (string messaggio in contattoCorrente.Chat)
+                            {
+                                lstBox.Items.Add(messaggio);
+                            }
                         }
                     }
                     catch (Exception ex)
