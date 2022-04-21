@@ -69,8 +69,8 @@ namespace Progetto_Socket
                         lstBox.Items.Add("TU" + ": " + txtMex.Text); //MIGLIORIA: mi trascrivo il messaggio inviato nella listbox
                         contattoCorrente.AggiungiMessaggio("TU" + ": " + txtMex.Text);
 
-                        //byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text); //codifico il messaggio
-                        //socket.SendTo(mex, contattoCorrente.EndPoint); //inoltro il messaggio al remote endpoint
+                        byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text); //codifico il messaggio
+                        socket.SendTo(mex, contattoCorrente.EndPoint); //inoltro il messaggio al remote endpoint
                     }
                 }
 
@@ -98,9 +98,9 @@ namespace Progetto_Socket
 
                 foreach(Contatto c in contatti)
                 {
-                    if(c.EndPoint == remoteEndPoint)
+                    if(c.EndPoint.ToString() == remoteEndPoint.ToString())
                     {
-                        c.AggiungiMessaggio(from + ": " + messaggio);
+                        c.AggiungiMessaggio(c.Nominativo + ": " + messaggio);
                         AggiornaChat();
                     }
                 }
