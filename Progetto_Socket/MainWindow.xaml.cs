@@ -205,12 +205,12 @@ namespace Progetto_Socket
                 {
                     lock (semaforo)
                     {
-                        //byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text); //codifico il messaggio
+                        byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text); //codifico il messaggio
                         foreach (Contatto c in contatti)
                         {
                             c.AggiungiMessaggio("TU" + ": " + txtMex.Text);
                             
-                            //socket.SendTo(mex, c.EndPoint); //inoltro il messaggio al remote endpoint
+                            socket.SendTo(mex, c.EndPoint); //inoltro il messaggio al remote endpoint
                         }
 
                         AggiornaChat();
@@ -229,7 +229,7 @@ namespace Progetto_Socket
         {
             lstBox.Items.Clear();
 
-            if (contattoCorrente.Chat != null)
+            if (contattoCorrente != null && contattoCorrente.Chat != null)
             {
                 foreach (string messaggio in contattoCorrente.Chat)
                 {
