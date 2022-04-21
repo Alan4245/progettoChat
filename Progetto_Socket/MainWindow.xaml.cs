@@ -62,12 +62,17 @@ namespace Progetto_Socket
         {
             try
             {
-                IPAddress remote = IPAddress.Parse(txtIP.Text); //ottengo l'ip remoto
-                IPEndPoint rempote_endpoint = new IPEndPoint(remote, int.Parse(txtPorta.Text)); //ottengo il remote endpoint
-                byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text); //codifico il messaggio
-                socket.SendTo(mex, rempote_endpoint); //inoltro il messaggio al remote endpoint
+                if(lstContatti.SelectedIndex != -1)
+                {
+                    lock (semaforo)
+                    {
+                        lstBox.Items.Add("TU" + ": " + txtMex.Text); //MIGLIORIA: mi trascrivo il messaggio inviato nella listbox
+                        contattoCorrente.AggiungiMessaggio("TU" + ": " + txtMex.Text);
 
-                lstBox.Items.Add("TU" + ": " + txtMex.Text); //MIGLIORIA: mi trascrivo il messaggio inviato nella listbox
+                        byte[] mex = Encoding.UTF8.GetBytes(txtMex.Text); //codifico il messaggio
+                        socket.SendTo(mex, contattoCorrente.EndPoint); //inoltro il messaggio al remote endpoint
+                    }
+                }
 
             }
             catch(Exception ex)
