@@ -103,5 +103,10 @@ namespace Progetto_Socket
             return Nominativo;
         }
 
+        public void CancellaChat()
+        {
+            List<string> nuovaChat = new List<string>();
+            _chat = nuovaChat;
+        }
     }
 }

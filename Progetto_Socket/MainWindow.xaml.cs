@@ -28,6 +28,7 @@ namespace Progetto_Socket
         DispatcherTimer dTimer; //creazione dispatcher
         object semaforo;
         List<Contatto> contatti;
+        Contatto contattoCorrente;
         public MainWindow()
         {
             try
@@ -35,13 +36,12 @@ namespace Progetto_Socket
                 InitializeComponent(); //inizializzazione componenti
 
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp); //istanzio la socket
-
                 IPAddress local = IPAddress.Any; //istanzio l'indirizzo locale
                 IPEndPoint endpoint = new IPEndPoint(local.MapToIPv4(), 65000); //istanzio un endpoint locale con porta 65000
-
+                socket.Bind(endpoint); //associo la socket ad un endpoint locale
                 lblRx.Content = "Ricezione messaggi attiva";
 
-                socket.Bind(endpoint); //associo la socket ad un endpoint locale
+
 
                 semaforo = new object();
                 contatti = new List<Contatto>();
@@ -98,7 +98,27 @@ namespace Progetto_Socket
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
-            lstBox.Items.Clear();
+            if(lstContatti.SelectedIndex != -1)
+            {
+                lock (semaforo)
+                {
+                    try
+                    {
+                        lstBox.Items.Clear();
+                        string nominativo = lstContatti.SelectedItem.ToString();
+                        foreach (Contatto c in contatti)
+                        {
+                            if (c.Nominativo == nominativo)
+                            {
+                                c.CancellaChat();
+                            }
+                        }
+                    }catch(Exception ex)
+                    {
+                        MessageBox.Show("Si è verificato un errore: " + ex.Message);
+                    }
+                }
+            }
         }
 
         private void btnCreaContatto_Click(object sender, RoutedEventArgs e)
@@ -110,11 +130,50 @@ namespace Progetto_Socket
                 IPEndPoint rempote_endpoint = new IPEndPoint(remote, int.Parse(txtPorta.Text));
                 string nominativo = txtNominativo.Text;
                 Contatto nuovoContatto = new Contatto(rempote_endpoint, nominativo);
-                lstContatti.Items.Add(nuovoContatto);
+                if (contatti.Contains(nuovoContatto))
+                {
+                    throw new Exception("Contatto già presente!");
+                }
+                else
+                {
+                    lstContatti.Items.Add(nuovoContatto);
+                }
             }
             catch(Exception ex)
             {
                 MessageBox.Show("Si è verificato un errore: " + ex.Message);
+            }
+
+        }
+
+        private void lstContatti_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+            if (lstContatti.SelectedIndex != -1)
+            {
+                lock (semaforo)
+                {
+                    try
+                    {
+                        string nominativo = lstContatti.SelectedItem.ToString();
+                        foreach (Contatto c in contatti)
+                        {
+                            if (c.Nominativo == nominativo)
+                            {
+                                contattoCorrente = c;
+                            }
+                        }
+
+                        foreach(string messaggio in contattoCorrente.Chat)
+                        {
+                            lstBox.Items.Add(messaggio);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Si è verificato un errore: " + ex.Message);
+                    }
+                }
             }
 
         }
